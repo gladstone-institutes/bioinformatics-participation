@@ -1,0 +1,20 @@
+Introduction to Bioinformatics and Computational Biology
+Python Programming for Biologists
+R for Genomic Data Analysis
+Next-Generation Sequencing Data Analysis
+RNA-seq Analysis Workshop
+Single-Cell RNA Sequencing Analysis
+Genome Assembly and Annotation
+Phylogenetic Analysis and Molecular Evolution
+Protein Structure Prediction and Analysis
+Machine Learning in Bioinformatics
+GWAS and Population Genetics
+Metagenomics and Microbiome Analysis
+ChIP-seq and Epigenomics
+Proteomics Data Analysis
+Biostatistics for Life Sciences
+Database Mining and Literature Review
+Workflow Management with Nextflow
+Docker and Containerization for Bioinformatics
+Cloud Computing for Genomics
+Data Visualization in Biology 

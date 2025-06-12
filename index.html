@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bioinformatics Workshop Certificate Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧬 Bioinformatics Workshop</h1>
+            <h2>Certificate of Participation</h2>
+            <p>Generate your personalized certificate of completion</p>
+        </header>
+
+        <main>
+            <form id="certificateForm" class="certificate-form">
+                <div class="form-group">
+                    <label for="participantName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="participantName" 
+                        name="participantName" 
+                        placeholder="Enter your full name as you'd like it to appear"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Enter your email address"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="workshop">Workshop Title</label>
+                    <select id="workshop" name="workshop" required>
+                        <option value="">Select a workshop...</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    📜 Generate Certificate
+                </button>
+            </form>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Generating your certificate...</p>
+            </div>
+
+            <div id="success" class="success-message hidden">
+                <div class="success-icon">✅</div>
+                <h3>Certificate Generated Successfully!</h3>
+                <p>Your certificate has been downloaded. Check your Downloads folder.</p>
+                <button onclick="resetForm()" class="reset-btn">Generate Another Certificate</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Gladstone Institutes - Bioinformatics Workshop Series</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
