@@ -227,15 +227,23 @@ To prevent fraudulent certificate usage and enable staff monitoring, the system 
 2. **Source:** "GitHub Actions"
 3. **The workflow will automatically deploy when you push to main**
 
-#### 5. Alternative: Local Development
+#### 5. Manual Deployment (When Updating Secrets)
+If you update the `GOOGLE_SCRIPT_URL` secret, you can manually trigger a new deployment:
+1. **Go to the Actions tab in your repository**
+2. **Click "Deploy to GitHub Pages" workflow**
+3. **Click "Run workflow" button**
+4. **Select the main branch and click "Run workflow"**
+5. **Wait for the deployment to complete**
+
+#### 6. Alternative: Local Development
 For local testing, uncomment this line in `script.js`:
 ```javascript
 // GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
 ```
 **Important:** Don't commit this change to your repository!
 
-#### 6. Test the Setup
-1. **Push your changes to trigger deployment**
+#### 7. Test the Setup
+1. **Push your changes to trigger deployment** (or use manual trigger)
 2. **Generate a test certificate on your live site**
 3. **Check your Google Drive for "Bioinformatics Certificate Log"**
 4. **Verify the entry appears in the sheet**

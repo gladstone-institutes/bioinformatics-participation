@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 permissions:
   contents: read
@@ -30,6 +31,12 @@ jobs:
           echo '{
             "googleScriptUrl": "${{ secrets.GOOGLE_SCRIPT_URL }}"
           }' > config.json
+
+      - name: Verify config.json was created
+        run: |
+          echo "Config file contents:"
+          cat config.json
+          echo "File size: $(wc -c < config.json) bytes"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
