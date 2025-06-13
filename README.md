@@ -11,51 +11,6 @@ A simple, elegant web application for generating PDF certificates of participati
 - **Professional Design**: Beautiful certificates with institutional branding
 - **No Backend Required**: Runs entirely in the browser, perfect for GitHub Pages
 
-## 🚀 Quick Start
-
-### GitHub Pages Setup
-
-1. **Enable GitHub Pages**:
-   - Go to your repository settings
-   - Scroll down to "Pages" section
-   - Select "Deploy from a branch"
-   - Choose "main" branch and "/ (root)" folder
-   - Click "Save"
-
-2. **Access Your Site**:
-   - Your site will be available at: `https://[username].github.io/[repository-name]`
-   - It may take a few minutes for the site to become available
-
-### Local Development
-
-1. **Clone the repository**:
-   ```bash
-   git clone [your-repo-url]
-   cd bioinformatics-participation
-   ```
-
-2. **Serve locally** (optional):
-   ```bash
-   # Using Python 3
-   python -m http.server 8000
-   
-   # Using Node.js (if you have http-server installed)
-   npx http-server
-   ```
-
-3. **Open in browser**:
-   - Navigate to `http://localhost:8000`
-
-## 📁 File Structure
-
-```
-├── index.html          # Main application page
-├── styles.css          # Styling and responsive design
-├── script.js           # Application logic and PDF generation
-├── workshops.txt       # List of workshop titles (one per line)
-└── README.md          # This file
-```
-
 ## 🎯 Usage
 
 ### For Participants
@@ -73,44 +28,12 @@ A simple, elegant web application for generating PDF certificates of participati
 ### For Staff
 
 #### Viewing Activity Logs
-- Open browser developer tools (F12)
-- Check the Console tab for real-time certificate generation logs
-- Each entry includes: date, participant name, email, and workshop title
-
-#### Exporting Activity Logs
-- Use keyboard shortcut: `Ctrl+Shift+E` (or `Cmd+Shift+E` on Mac)
-- This downloads a CSV file with all certificate generation records
-- File includes: Date, Name, Email, Workshop columns
+- Refer to the team's Google Sheet called Certification Log
 
 #### Managing Workshop List
 - Edit the `workshops.txt` file to add, remove, or modify workshop titles
-- Each workshop should be on a separate line
+- Each workshop should be on a separate line with date in parentheses
 - Changes take effect immediately when the page is refreshed
-
-## 🛠️ Customization
-
-### Workshop Titles
-Edit `workshops.txt` to modify the available workshops:
-```
-Introduction to Bioinformatics and Computational Biology
-Python Programming for Biologists
-R for Genomic Data Analysis
-...
-```
-
-### Certificate Design
-Modify the `generateCertificate()` function in `script.js` to customize:
-- Colors and fonts
-- Layout and spacing
-- Institution name and branding
-- Certificate text and formatting
-
-### Styling
-Edit `styles.css` to customize:
-- Color scheme
-- Typography
-- Layout and spacing
-- Responsive breakpoints
 
 ## 🔧 Technical Details
 
@@ -125,32 +48,13 @@ Edit `styles.css` to customize:
 
 ### Data Storage
 - **Workshop List**: Loaded from `workshops.txt` file
-- **Activity Log**: Stored in browser's localStorage
+- **Activity Log**: Stored in Google Sheets
 - **No server-side storage**: All data remains client-side
 
 ### Security Considerations
 - No sensitive data is transmitted or stored
 - Email addresses are only used for logging purposes
 - All processing happens client-side
-
-## 📱 Mobile Support
-
-The application is fully responsive and works on:
-- Desktop computers
-- Tablets
-- Mobile phones
-- All screen sizes and orientations
-
-## 🎨 Certificate Features
-
-Generated certificates include:
-- Professional layout with institutional branding
-- Participant's name prominently displayed
-- Workshop title (handles long titles gracefully)
-- Current date
-- Signature line for workshop coordinator
-- Decorative DNA helix elements
-- High-quality PDF format suitable for printing
 
 ## 🔍 Troubleshooting
 
@@ -235,26 +139,11 @@ If you update the `GOOGLE_SCRIPT_URL` secret, you can manually trigger a new dep
 4. **Select the main branch and click "Run workflow"**
 5. **Wait for the deployment to complete**
 
-#### 6. Alternative: Local Development
-For local testing, uncomment this line in `script.js`:
-```javascript
-// GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
-```
-**Important:** Don't commit this change to your repository!
-
-#### 7. Test the Setup
+#### 6. Test the Setup
 1. **Push your changes to trigger deployment** (or use manual trigger)
 2. **Generate a test certificate on your live site**
 3. **Check your Google Drive for "Bioinformatics Certificate Log"**
 4. **Verify the entry appears in the sheet**
-
-### 🛡️ Security Benefits
-
-✅ **URL Hidden**: Google Apps Script URL is stored securely in GitHub Secrets  
-✅ **No Public Exposure**: URL never appears in your public repository  
-✅ **Access Control**: Only repository admins can view/edit secrets  
-✅ **Automatic Deployment**: Secrets are injected during GitHub Actions build  
-✅ **Fraud Prevention**: Detailed logging helps identify suspicious activity  
 
 ### 🔧 How It Works
 
@@ -271,27 +160,6 @@ Each certificate generation records:
 - **Email**: Participant's email
 - **Workshop**: Full workshop title and date
 - **User Agent**: Browser information (for fraud detection)
-
-### 👥 Staff Monitoring
-
-**Access the Log:**
-- The Google Sheet is automatically created in your Google Drive
-- Only you (and accounts you explicitly share with) can view the log
-- The sheet updates in real-time as certificates are generated
-
-**Fraud Detection Features:**
-- Timestamps help identify unusual generation patterns
-- Email addresses can be cross-referenced with workshop attendance
-- Browser information helps identify automated/bot activity
-- Workshop dates help verify legitimate certificate requests
-
-**Regular Monitoring:**
-- Review the log weekly or after each workshop
-- Look for duplicate names/emails for the same workshop
-- Check for certificates generated outside reasonable timeframes
-- Verify email addresses match your workshop registration records
-
-### 🚨 Troubleshooting
 
 **If logging isn't working:**
 1. Check browser console for error messages
