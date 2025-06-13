@@ -2,6 +2,9 @@
 let workshops = [];
 let certificateLog = [];
 
+// Configuration for Google Sheets logging
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/gladstone.ucsf.edu/s/AKfycbw5dxcAl9XjuVg7_n_hNbSmYwGlKzx7FMJN6VchLiZIZmqT_nQPrU-apKXXrR0x84VR/exec'; // Replace with your actual URL
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     loadWorkshops();
@@ -76,7 +79,7 @@ async function handleFormSubmission(event) {
         await generateCertificate(participantName, workshop);
         
         // Log the certificate generation
-        logCertificateGeneration(participantName, email, workshop);
+        await logCertificateGeneration(participantName, email, workshop);
         
         // Show success message
         showSuccess();
@@ -169,22 +172,20 @@ async function generateCertificate(participantName, workshop) {
         }
         
         // Date and signature area
-        const currentDate = new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-        
         doc.setFontSize(12);
         doc.setFont(undefined, 'normal');
         doc.setTextColor(51, 51, 51);
         
-        // Date
-        doc.text(`Date: ${currentDate}`, 40, pageHeight - 40);
+        // Date (use workshop date if available, otherwise current date)
+        const displayDate = workshopDate || new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        doc.text(`Date: ${displayDate}`, 40, pageHeight - 40);
         
-        // Coordinator name and signature line
-        doc.text('Zainab Yusuf Sada', pageWidth - 80, pageHeight - 50);
-        doc.text('_________________________', pageWidth - 80, pageHeight - 40);
+        // Coordinator name (no signature line)
+        doc.text('Zainab Yusuf Sada', pageWidth - 80, pageHeight - 40);
         doc.text('Workshop Coordinator', pageWidth - 80, pageHeight - 30);
         
         // DNA helix decoration (simple representation)
@@ -199,7 +200,11 @@ async function generateCertificate(participantName, workshop) {
         }
         
         // Save the PDF
-        const fileName = `${participantName.replace(/[^a-zA-Z0-9]/g, '_')}_Certificate.pdf`;
+        const cleanName = participantName.replace(/[^a-zA-Z0-9]/g, '_');
+        const cleanDate = workshopDate ? workshopDate.replace(/[^a-zA-Z0-9]/g, '_') : '';
+        const fileName = cleanDate 
+            ? `${cleanName}_${cleanDate}_Certificate.pdf`
+            : `${cleanName}_Certificate.pdf`;
         doc.save(fileName);
         
         // Resolve after a short delay to show loading animation
@@ -207,21 +212,39 @@ async function generateCertificate(participantName, workshop) {
     });
 }
 
-// Log certificate generation
-function logCertificateGeneration(name, email, workshop) {
+// Log certificate generation to Google Sheets
+async function logCertificateGeneration(name, email, workshop) {
     const logEntry = {
-        date: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
         name: name,
         email: email,
         workshop: workshop,
-        timestamp: Date.now()
+        ipAddress: 'N/A', // Could be enhanced with IP detection
+        userAgent: navigator.userAgent.substring(0, 100) // Browser info for fraud detection
     };
     
+    // Keep local log as backup
     certificateLog.push(logEntry);
     saveCertificateLog();
     
-    // Also log to console for staff review
+    // Log to console for immediate staff review
     console.log('Certificate Generated:', logEntry);
+    
+    // Send to Google Sheets (non-blocking)
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(logEntry)
+        });
+        console.log('Certificate logged to Google Sheets successfully');
+    } catch (error) {
+        console.error('Failed to log to Google Sheets:', error);
+        // Could implement retry logic here
+    }
 }
 
 // Load certificate log from localStorage

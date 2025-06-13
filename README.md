@@ -193,6 +193,64 @@ For issues or questions:
 2. Review browser console for error messages
 3. Create an issue in the GitHub repository
 
+## 🔐 Secure Certificate Logging Setup
+
+To prevent fraudulent certificate usage and enable staff monitoring, the system logs all certificate generations to a Google Sheet that only authorized staff can access.
+
+### Setup Instructions
+
+#### 1. Create Google Apps Script
+1. Go to [script.google.com](https://script.google.com)
+2. Click "New Project"
+3. Replace the default code with the contents of `google-apps-script.js`
+4. Save the project with a name like "Certificate Logger"
+
+#### 2. Deploy the Script
+1. Click "Deploy" → "New deployment"
+2. Choose type: "Web app"
+3. Set execute as: "Me"
+4. Set access: "Anyone" (this allows the website to send data)
+5. Click "Deploy"
+6. Copy the deployment URL
+
+#### 3. Configure the Website
+1. Open `script.js`
+2. Replace `YOUR_GOOGLE_APPS_SCRIPT_URL_HERE` with your deployment URL
+3. Save and deploy your website
+
+#### 4. Test the Setup
+1. Generate a test certificate
+2. Check your Google Drive for a new spreadsheet called "Bioinformatics Certificate Log"
+3. Verify the entry appears in the sheet
+
+### What Gets Logged
+
+Each certificate generation records:
+- **Timestamp**: When the certificate was generated
+- **Name**: Participant's name
+- **Email**: Participant's email
+- **Workshop**: Full workshop title and date
+- **User Agent**: Browser information (for fraud detection)
+
+### Staff Monitoring
+
+**Access the Log:**
+- The Google Sheet is automatically created and shared with the Google account that deployed the script
+- Only you (and accounts you explicitly share with) can view the log
+- The sheet updates in real-time as certificates are generated
+
+**Fraud Detection Features:**
+- Timestamps help identify unusual generation patterns
+- Email addresses can be cross-referenced with actual workshop attendance
+- Browser information helps identify automated/bot activity
+- Workshop dates help verify legitimate certificate requests
+
+**Regular Monitoring:**
+- Review the log weekly or after each workshop
+- Look for duplicate names/emails for the same workshop
+- Check for certificates generated outside of reasonable timeframes
+- Verify email addresses match your workshop registration records
+
 ---
 
 **Note**: This application runs entirely in the browser and requires no server-side components, making it perfect for GitHub Pages hosting. 
