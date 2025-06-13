@@ -3,14 +3,52 @@ let workshops = [];
 let certificateLog = [];
 
 // Configuration for Google Sheets logging
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/gladstone.ucsf.edu/s/AKfycbw5dxcAl9XjuVg7_n_hNbSmYwGlKzx7FMJN6VchLiZIZmqT_nQPrU-apKXXrR0x84VR/exec'; // Replace with your actual URL
+// This will be loaded from config.json (created by GitHub Actions from secrets)
+let GOOGLE_SCRIPT_URL = '';
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadConfig();
     loadWorkshops();
     loadCertificateLog();
     setupFormHandler();
 });
+
+// Try to load configuration from different sources
+async function loadConfig() {
+    // Method 1: Try to load from config.json (created by GitHub Actions from secrets)
+    try {
+        const response = await fetch('config.json');
+        if (response.ok) {
+            const config = await response.json();
+            if (config.googleScriptUrl && config.googleScriptUrl !== 'YOUR_SCRIPT_ID_HERE') {
+                GOOGLE_SCRIPT_URL = config.googleScriptUrl;
+                console.log('✅ Configuration loaded from config.json');
+                return;
+            }
+        }
+    } catch (error) {
+        // Config file doesn't exist or is invalid, continue to next method
+        console.log('ℹ️ config.json not found or invalid, trying other methods...');
+    }
+    
+    // Method 2: Check for environment variable (if using a build process)
+    if (typeof process !== 'undefined' && process.env && process.env.GOOGLE_SCRIPT_URL) {
+        GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
+        console.log('✅ Configuration loaded from environment variable');
+        return;
+    }
+    
+    // Method 3: Development fallback - uncomment for local testing
+    // GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
+    
+    if (!GOOGLE_SCRIPT_URL) {
+        console.warn('⚠️ Google Apps Script URL not configured');
+        console.warn('📋 For GitHub Pages: Add GOOGLE_SCRIPT_URL to repository secrets');
+        console.warn('📋 For local development: Uncomment the fallback URL in script.js');
+        console.warn('📋 Certificates will still generate, but logging to Google Sheets will be disabled');
+    }
+}
 
 // Load workshops from the text file
 async function loadWorkshops() {
@@ -162,14 +200,6 @@ async function generateCertificate(participantName, workshop) {
             doc.text(line, pageWidth / 2, startY + (index * 8), { align: 'center' });
         });
         
-        // Workshop date (if available)
-        if (workshopDate) {
-            startY = startY + (workshopLines.length * 8) + 10;
-            doc.setFontSize(16);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(51, 51, 51);
-            doc.text(`(${workshopDate})`, pageWidth / 2, startY, { align: 'center' });
-        }
         
         // Date and signature area
         doc.setFontSize(12);
@@ -230,20 +260,74 @@ async function logCertificateGeneration(name, email, workshop) {
     // Log to console for immediate staff review
     console.log('Certificate Generated:', logEntry);
     
-    // Send to Google Sheets (non-blocking)
+    // Check if Google Sheets logging is configured
+    if (!GOOGLE_SCRIPT_URL) {
+        console.warn('⚠️ Google Sheets logging not configured - certificate logged locally only');
+        return;
+    }
+    
+    console.log('Attempting to log to Google Sheets...');
+    
+    // Send to Google Sheets with better error handling
     try {
-        await fetch(GOOGLE_SCRIPT_URL, {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'text/plain', // Changed from application/json
             },
             body: JSON.stringify(logEntry)
         });
-        console.log('Certificate logged to Google Sheets successfully');
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (response.status === 401) {
+            console.error('❌ Authentication error (401): Google Apps Script deployment needs to be reconfigured');
+            console.error('📋 Fix: Redeploy with "Execute as: Me" and "Who has access: Anyone"');
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        try {
+            const result = JSON.parse(responseText);
+            if (result.success) {
+                console.log('✅ Certificate logged to Google Sheets successfully');
+                console.log('📊 Log entry details:', result);
+            } else {
+                console.error('❌ Google Sheets logging failed:', result.error);
+            }
+        } catch (parseError) {
+            console.log('✅ Certificate logged (non-JSON response):', responseText);
+        }
+        
     } catch (error) {
-        console.error('Failed to log to Google Sheets:', error);
-        // Could implement retry logic here
+        console.error('❌ Failed to log to Google Sheets:', error);
+        
+        // Try alternative method with FormData
+        console.log('🔄 Trying alternative logging method...');
+        try {
+            const formData = new FormData();
+            formData.append('data', JSON.stringify(logEntry));
+            
+            const fallbackResponse = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (fallbackResponse.ok) {
+                console.log('✅ Certificate logged via fallback method');
+            } else {
+                console.error('❌ Fallback method also failed:', fallbackResponse.status);
+            }
+        } catch (fallbackError) {
+            console.error('❌ Both logging methods failed:', fallbackError);
+        }
     }
 }
 

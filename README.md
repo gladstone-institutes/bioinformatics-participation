@@ -193,7 +193,7 @@ For issues or questions:
 2. Review browser console for error messages
 3. Create an issue in the GitHub repository
 
-## 🔐 Secure Certificate Logging Setup
+## 🔐 Secure Certificate Logging Setup (GitHub Pages)
 
 To prevent fraudulent certificate usage and enable staff monitoring, the system logs all certificate generations to a Google Sheet that only authorized staff can access.
 
@@ -208,22 +208,54 @@ To prevent fraudulent certificate usage and enable staff monitoring, the system 
 #### 2. Deploy the Script
 1. Click "Deploy" → "New deployment"
 2. Choose type: "Web app"
-3. Set execute as: "Me"
-4. Set access: "Anyone" (this allows the website to send data)
-5. Click "Deploy"
-6. Copy the deployment URL
+3. **Critical settings:**
+   - ✅ **Execute as:** "Me"
+   - ✅ **Who has access:** "Anyone" (not "Anyone with Google account")
+4. Click "Deploy"
+5. **Copy the deployment URL** (you'll need this for the next step)
 
-#### 3. Configure the Website
-1. Open `script.js`
-2. Replace `YOUR_GOOGLE_APPS_SCRIPT_URL_HERE` with your deployment URL
-3. Save and deploy your website
+#### 3. Configure GitHub Secrets (Recommended for GitHub Pages)
+1. **Go to your GitHub repository**
+2. **Click Settings → Secrets and variables → Actions**
+3. **Click "New repository secret"**
+4. **Name:** `GOOGLE_SCRIPT_URL`
+5. **Value:** Your Google Apps Script deployment URL
+6. **Click "Add secret"**
 
-#### 4. Test the Setup
-1. Generate a test certificate
-2. Check your Google Drive for a new spreadsheet called "Bioinformatics Certificate Log"
-3. Verify the entry appears in the sheet
+#### 4. Enable GitHub Pages with Actions
+1. **Go to Settings → Pages**
+2. **Source:** "GitHub Actions"
+3. **The workflow will automatically deploy when you push to main**
 
-### What Gets Logged
+#### 5. Alternative: Local Development
+For local testing, uncomment this line in `script.js`:
+```javascript
+// GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
+```
+**Important:** Don't commit this change to your repository!
+
+#### 6. Test the Setup
+1. **Push your changes to trigger deployment**
+2. **Generate a test certificate on your live site**
+3. **Check your Google Drive for "Bioinformatics Certificate Log"**
+4. **Verify the entry appears in the sheet**
+
+### 🛡️ Security Benefits
+
+✅ **URL Hidden**: Google Apps Script URL is stored securely in GitHub Secrets  
+✅ **No Public Exposure**: URL never appears in your public repository  
+✅ **Access Control**: Only repository admins can view/edit secrets  
+✅ **Automatic Deployment**: Secrets are injected during GitHub Actions build  
+✅ **Fraud Prevention**: Detailed logging helps identify suspicious activity  
+
+### 🔧 How It Works
+
+1. **GitHub Actions** reads the `GOOGLE_SCRIPT_URL` secret during deployment
+2. **Creates `config.json`** with the URL during the build process
+3. **Website loads** the URL from `config.json` at runtime
+4. **Logging works** seamlessly without exposing sensitive data
+
+### 📊 What Gets Logged
 
 Each certificate generation records:
 - **Timestamp**: When the certificate was generated
@@ -232,24 +264,37 @@ Each certificate generation records:
 - **Workshop**: Full workshop title and date
 - **User Agent**: Browser information (for fraud detection)
 
-### Staff Monitoring
+### 👥 Staff Monitoring
 
 **Access the Log:**
-- The Google Sheet is automatically created and shared with the Google account that deployed the script
+- The Google Sheet is automatically created in your Google Drive
 - Only you (and accounts you explicitly share with) can view the log
 - The sheet updates in real-time as certificates are generated
 
 **Fraud Detection Features:**
 - Timestamps help identify unusual generation patterns
-- Email addresses can be cross-referenced with actual workshop attendance
+- Email addresses can be cross-referenced with workshop attendance
 - Browser information helps identify automated/bot activity
 - Workshop dates help verify legitimate certificate requests
 
 **Regular Monitoring:**
 - Review the log weekly or after each workshop
 - Look for duplicate names/emails for the same workshop
-- Check for certificates generated outside of reasonable timeframes
+- Check for certificates generated outside reasonable timeframes
 - Verify email addresses match your workshop registration records
+
+### 🚨 Troubleshooting
+
+**If logging isn't working:**
+1. Check browser console for error messages
+2. Verify the GitHub Secret is set correctly
+3. Ensure GitHub Actions deployment completed successfully
+4. Test the Google Apps Script directly using the `testLogging` function
+
+**Common issues:**
+- **401 errors**: Redeploy Google Apps Script with correct permissions
+- **No config.json**: GitHub Actions may have failed - check the Actions tab
+- **Secret not found**: Verify the secret name is exactly `GOOGLE_SCRIPT_URL`
 
 ---
 
