@@ -91,6 +91,11 @@ async function handleFormSubmission(event) {
 // Generate PDF certificate
 async function generateCertificate(participantName, workshop) {
     return new Promise((resolve) => {
+        // Parse workshop title and date
+        const workshopMatch = workshop.match(/^(.+?)\s*\((.+?)\)$/);
+        const workshopTitle = workshopMatch ? workshopMatch[1].trim() : workshop;
+        const workshopDate = workshopMatch ? workshopMatch[2].trim() : '';
+        
         // Create new jsPDF instance
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({
@@ -148,11 +153,20 @@ async function generateCertificate(participantName, workshop) {
         
         // Handle long workshop titles by splitting them
         const maxWidth = pageWidth - 60;
-        const workshopLines = doc.splitTextToSize(workshop, maxWidth);
-        const startY = 140;
+        const workshopLines = doc.splitTextToSize(workshopTitle, maxWidth);
+        let startY = 140;
         workshopLines.forEach((line, index) => {
             doc.text(line, pageWidth / 2, startY + (index * 8), { align: 'center' });
         });
+        
+        // Workshop date (if available)
+        if (workshopDate) {
+            startY = startY + (workshopLines.length * 8) + 10;
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(51, 51, 51);
+            doc.text(`(${workshopDate})`, pageWidth / 2, startY, { align: 'center' });
+        }
         
         // Date and signature area
         const currentDate = new Date().toLocaleDateString('en-US', {
@@ -168,7 +182,8 @@ async function generateCertificate(participantName, workshop) {
         // Date
         doc.text(`Date: ${currentDate}`, 40, pageHeight - 40);
         
-        // Signature line
+        // Coordinator name and signature line
+        doc.text('Zainab Yusuf Sada', pageWidth - 80, pageHeight - 50);
         doc.text('_________________________', pageWidth - 80, pageHeight - 40);
         doc.text('Workshop Coordinator', pageWidth - 80, pageHeight - 30);
         
@@ -247,14 +262,6 @@ function showSuccess() {
 
 // Hide loading state
 function hideLoading() {
-    document.getElementById('certificateForm').classList.remove('hidden');
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('success').classList.add('hidden');
-}
-
-// Reset form to initial state
-function resetForm() {
-    document.getElementById('certificateForm').reset();
     document.getElementById('certificateForm').classList.remove('hidden');
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('success').classList.add('hidden');
