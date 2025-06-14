@@ -179,7 +179,7 @@ async function generateCertificate(participantName, workshop) {
         // Participant name
         doc.setFontSize(28);
         doc.setFont(undefined, 'bold');
-        doc.setTextColor(0, 212, 230); // #00D4E6 (Secondary cyan)
+        doc.setTextColor(0, 42, 64); // #002A40
         doc.text(participantName, pageWidth / 2, 100, { align: 'center' });
         
         // Completion text
@@ -191,7 +191,7 @@ async function generateCertificate(participantName, workshop) {
         // Workshop title
         doc.setFontSize(20);
         doc.setFont(undefined, 'bold');
-        doc.setTextColor(250, 164, 8); // #FAA408 (Secondary yellow)
+        doc.setTextColor(0, 42, 64); // #002A40
         
         // Handle long workshop titles by splitting them
         const maxWidth = pageWidth - 60;
@@ -220,17 +220,6 @@ async function generateCertificate(participantName, workshop) {
         doc.text('Workshop Coordinator', pageWidth - 80, pageHeight - 30);
         
         // DNA helix decoration (using accent colors)
-        doc.setDrawColor(204, 41, 163); // #CC29A3 (Secondary magenta)
-        doc.setLineWidth(0.5);
-        for (let i = 0; i < 20; i++) {
-            const x = 25 + i * 2;
-            const y1 = 25 + Math.sin(i * 0.5) * 3;
-            const y2 = 25 - Math.sin(i * 0.5) * 3;
-            doc.line(x, y1, x + 1, y1);
-            doc.line(x, y2, x + 1, y2);
-        }
-        
-        // Additional decorative elements on the right
         doc.setDrawColor(0, 212, 230); // #00D4E6 (Secondary cyan)
         for (let i = 0; i < 15; i++) {
             const x = pageWidth - 45 + i * 1.5;
