@@ -90,7 +90,7 @@ function populateWorkshopDropdown() {
 
 // Setup form submission handler
 function setupFormHandler() {
-    const form = document.getElementById('certificateForm');
+    const form = document.getElementById('certificateFormElement');
     form.addEventListener('submit', handleFormSubmission);
 }
 
@@ -149,48 +149,49 @@ async function generateCertificate(participantName, workshop) {
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
         
-        // Background border
-        doc.setDrawColor(102, 126, 234);
+        // Background border (Primary dark blue)
+        doc.setDrawColor(0, 42, 64); // #002A40
         doc.setLineWidth(3);
         doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
         
-        // Inner border
+        // Inner border (Light blue-gray)
+        doc.setDrawColor(213, 228, 229); // #D5E4E5
         doc.setLineWidth(1);
         doc.rect(15, 15, pageWidth - 30, pageHeight - 30);
         
         // Title
         doc.setFontSize(32);
-        doc.setTextColor(102, 126, 234);
+        doc.setTextColor(0, 42, 64); // #002A40
         doc.setFont(undefined, 'bold');
         doc.text('CERTIFICATE OF PARTICIPATION', pageWidth / 2, 40, { align: 'center' });
         
         // Subtitle
         doc.setFontSize(18);
-        doc.setTextColor(118, 75, 162);
+        doc.setTextColor(247, 105, 18); // #F76912 (Secondary orange)
         doc.setFont(undefined, 'normal');
         doc.text('Gladstone Institutes - Bioinformatics Workshop Series', pageWidth / 2, 55, { align: 'center' });
         
         // Main text
         doc.setFontSize(16);
-        doc.setTextColor(51, 51, 51);
+        doc.setTextColor(138, 147, 148); // #8A9394
         doc.text('This is to certify that', pageWidth / 2, 80, { align: 'center' });
         
         // Participant name
         doc.setFontSize(28);
         doc.setFont(undefined, 'bold');
-        doc.setTextColor(102, 126, 234);
+        doc.setTextColor(0, 212, 230); // #00D4E6 (Secondary cyan)
         doc.text(participantName, pageWidth / 2, 100, { align: 'center' });
         
         // Completion text
         doc.setFontSize(16);
         doc.setFont(undefined, 'normal');
-        doc.setTextColor(51, 51, 51);
+        doc.setTextColor(138, 147, 148); // #8A9394
         doc.text('has successfully participated in the workshop', pageWidth / 2, 120, { align: 'center' });
         
         // Workshop title
         doc.setFontSize(20);
         doc.setFont(undefined, 'bold');
-        doc.setTextColor(118, 75, 162);
+        doc.setTextColor(250, 164, 8); // #FAA408 (Secondary yellow)
         
         // Handle long workshop titles by splitting them
         const maxWidth = pageWidth - 60;
@@ -204,7 +205,7 @@ async function generateCertificate(participantName, workshop) {
         // Date and signature area
         doc.setFontSize(12);
         doc.setFont(undefined, 'normal');
-        doc.setTextColor(51, 51, 51);
+        doc.setTextColor(0, 42, 64); // #002A40
         
         // Date (use workshop date if available, otherwise current date)
         const displayDate = workshopDate || new Date().toLocaleDateString('en-US', {
@@ -218,13 +219,23 @@ async function generateCertificate(participantName, workshop) {
         doc.text('Zainab Yusuf Sada', pageWidth - 80, pageHeight - 40);
         doc.text('Workshop Coordinator', pageWidth - 80, pageHeight - 30);
         
-        // DNA helix decoration (simple representation)
-        doc.setDrawColor(102, 126, 234);
+        // DNA helix decoration (using accent colors)
+        doc.setDrawColor(204, 41, 163); // #CC29A3 (Secondary magenta)
         doc.setLineWidth(0.5);
         for (let i = 0; i < 20; i++) {
             const x = 25 + i * 2;
             const y1 = 25 + Math.sin(i * 0.5) * 3;
             const y2 = 25 - Math.sin(i * 0.5) * 3;
+            doc.line(x, y1, x + 1, y1);
+            doc.line(x, y2, x + 1, y2);
+        }
+        
+        // Additional decorative elements on the right
+        doc.setDrawColor(0, 212, 230); // #00D4E6 (Secondary cyan)
+        for (let i = 0; i < 15; i++) {
+            const x = pageWidth - 45 + i * 1.5;
+            const y1 = pageHeight - 70 + Math.cos(i * 0.7) * 2;
+            const y2 = pageHeight - 70 - Math.cos(i * 0.7) * 2;
             doc.line(x, y1, x + 1, y1);
             doc.line(x, y2, x + 1, y2);
         }

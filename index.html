@@ -8,65 +8,91 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🧬 Bioinformatics Workshop</h1>
-            <h2>Certificate of Participation</h2>
-            <p>Generate your personalized certificate of completion</p>
-        </header>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <img src="GladstoneLogoBlu.png" alt="Gladstone Institutes" class="logo">
+            <div class="header-text">
+                <h1>Certificate Generator</h1>
+                <p>Bioinformatics Workshop Series</p>
+            </div>
+        </div>
+    </header>
 
-        <main>
-            <form id="certificateForm" class="certificate-form">
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Certificate Form -->
+        <div id="certificateForm" class="card">
+            <h2>Generate Your Certificate</h2>
+            <form id="certificateFormElement">
                 <div class="form-group">
                     <label for="participantName">Full Name</label>
-                    <input 
-                        type="text" 
-                        id="participantName" 
-                        name="participantName" 
-                        placeholder="Enter your full name as you'd like it to appear"
-                        required
-                    >
+                    <input type="text" id="participantName" name="participantName" required 
+                           placeholder="Enter your full name as it should appear on the certificate">
                 </div>
-
+                
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="Enter your email address"
-                        required
-                    >
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Enter your email address">
                 </div>
-
+                
                 <div class="form-group">
-                    <label for="workshop">Workshop Title</label>
+                    <label for="workshop">Workshop Attended</label>
                     <select id="workshop" name="workshop" required>
-                        <option value="">Select a workshop...</option>
+                        <option value="">Select the workshop you attended</option>
+                        <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
-
-                <button type="submit" class="submit-btn">
-                    📜 Generate Certificate
+                
+                <button type="submit" class="btn btn-primary">
+                    Generate Certificate
                 </button>
             </form>
+        </div>
 
-            <div id="loading" class="loading hidden">
+        <!-- Loading State -->
+        <div id="loading" class="card hidden">
+            <div class="loading">
                 <div class="spinner"></div>
-                <p>Generating your certificate...</p>
+                <h3>Generating Your Certificate</h3>
+                <p>Please wait while we create your personalized certificate...</p>
             </div>
+        </div>
 
-            <div id="success" class="success-message hidden">
-                <div class="success-icon">✅</div>
+        <!-- Success State -->
+        <div id="success" class="card hidden">
+            <div class="success">
+                <div class="success-icon">✓</div>
                 <h3>Certificate Generated Successfully!</h3>
-                <p>Your certificate has been downloaded. Check your Downloads folder.</p>
+                <p>Your certificate has been downloaded to your device. You can now print it or save it digitally.</p>
+                <button onclick="location.reload()" class="btn btn-secondary">
+                    Generate Another Certificate
+                </button>
             </div>
-        </main>
+        </div>
 
-        <footer>
-            <p>&copy; 2025 Gladstone Institutes - Bioinformatics Workshop Series</p>
-        </footer>
+        <!-- Information Card -->
+        <div class="card">
+            <h2>About This Certificate</h2>
+            <p>This certificate validates your participation in the Gladstone Institutes Bioinformatics Workshop Series. Each certificate includes:</p>
+            <ul style="margin: 1rem 0; padding-left: 2rem; color: #8A9394;">
+                <li>Your name and workshop details</li>
+                <li>Official Gladstone Institutes branding</li>
+                <li>Workshop coordinator signature</li>
+                <li>Professional PDF format suitable for printing</li>
+            </ul>
+            <p style="color: #8A9394; font-size: 0.9rem; margin-top: 1.5rem;">
+                <strong>Note:</strong> All certificate generations are logged for verification purposes. 
+                Please ensure your information is accurate before generating your certificate.
+            </p>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Gladstone Institutes. All rights reserved.</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
