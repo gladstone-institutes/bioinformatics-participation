@@ -3,6 +3,7 @@ Introduction to Statistics and Experimental Design and Hypothesis Testing (Augus
 Introduction to RNA-Seq Analysis (September 22-23, 2025)
 Introduction to Linear Mixed Effects Models (September 29-30, 2025)
 Working on Wynton (October 2-3, 2025)
+Intermediate RNA-Seq Analysis Using R (October 6, 2025)
 Single Cell RNA-Seq Analysis (October 13-14, 2025)
 Introduction to Pathway Analysis (October 16, 2025)
 Statistics of Enrichment Analyses Methods (October 20-21, 2025)
